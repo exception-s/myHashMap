@@ -1,89 +1,47 @@
-import java.util.ArrayList;
-
-public class myHashMap {
-    private int maxCapacity;
-    public myHashMap(int capacity){
-        this.maxCapacity = capacity;
+public class myHashMap extends PrimitiveHashMap{
+    int current = 0;
+    Object[] keys = new Object[size];
+    Object[] values = new Object[size];
+    public myHashMap() {
+        super();
     }
-    private ArrayList<Pair> map = new ArrayList<>();
-    private ArrayList<Key> keys = new ArrayList<>();
-    private int[] values = new int[maxCapacity];
-
-    public void put(Pair pair) {
-        boolean flag = true;
-        for (int i = 0; i < map.size(); i++){
-            if (pair.getFirst().equals(map.get(i).getFirst())) {
-                map.remove(i);
-                map.add(pair);
-                flag = false;
-                break;
+    public myHashMap(int size) {
+        super(size);
+    }
+    public void put(Object key, Object value){
+        int index = key.hashCode() & (size - 1);
+        keys[current] = key;
+        values[current] = value;
+        arr[index] = value;
+        current++;
+        if (current >= size - 1){
+            Object[] help_arr = new Object[size * 2];
+            for (int i = 0; i < size; i++){
+                int helpIndex = keys[i].hashCode() & (2 * size - 1);
+                help_arr[helpIndex] = values[i];
             }
-        }
-        if (flag) map.add(pair);
-    }
-
-    public void remove(Key key) {
-        boolean flag = true;
-        for (int i = 0; i < map.size(); i++){
-            if (key.equals(map.get(i).getFirst())) {
-                map.remove(i);
-                break;
-            }
+            arr = help_arr;
         }
     }
-
-    public boolean containsKey(Key key){
-        for (int i = 0; i < map.size(); i++){
-            if (key.hashCode() == map.get(i).getFirst().hashCode()) return true;
-        }
-        return false;
+    public boolean isExist(Object key){
+        int index = key.hashCode() & (size - 1);
+        if (arr[index] == null) return false;
+        return true;
+    }
+    public Object getValue(Object key){
+        int index = key.hashCode() & (size - 1);
+        return arr[index];
     }
 
-    public boolean containsValue(int value){
-        for (int i = 0; i < map.size(); i++){
-            if (value == map.get(i).getSecond()) {
-                return true;
-            }
-        }
-        return false;
+    //to do
+    public void remove(Object key){
+        int index = key.hashCode() & (size - 1);
+        arr[index] = null;
+        current--;
     }
 
-    public ArrayList keySet() {
-        for (int i = 0; i < map.size(); i++){
-            keys.add(map.get(i).getFirst());
-        }
-        return keys;
-    }
-
-    public int[] values() {
-        for (int i = 0; i < map.size(); i++){
-            values[i] = map.get(i).getSecond();
-        }
-        return values;
-    }
-
-    public int size(){
-        return map.size();
-    }
-
-    public void clear(){
-        map.clear();
-
-    }
-
-    public boolean isEmpty(){
-        return size() == 0;
-    }
-
-    @Override
-    public String toString() {
-        for (int i = 0; i < map.size(); i++){
-            System.out.println(map.get(i).toString());
-        }
-        if (isEmpty()) {
-            System.out.println("I am empty :(");
-            return "";
-        }
-        else return "";
+    public int getSize(){
+        return size;
     }
 }
+
